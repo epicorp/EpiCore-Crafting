@@ -1,6 +1,7 @@
 package net.epicorp.crafting;
 
 import net.epicorp.utilities.inventories.Inventories;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,7 +13,6 @@ import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -26,6 +26,14 @@ public class CraftingRecipeManager implements Listener {
 
 	public void register(CraftingRecipe recipe) {
 		this.recipes.add(recipe);
+	}
+
+	public List<CraftingRecipe> getRecipes() {
+		return recipes;
+	}
+
+	public void setRecipes(List<CraftingRecipe> recipes) {
+		this.recipes = recipes;
 	}
 
 	private Set<UUID> players = Collections.newSetFromMap(new ConcurrentHashMap<>());
@@ -46,20 +54,16 @@ public class CraftingRecipeManager implements Listener {
 					UUID uuid = event.getView().getPlayer().getUniqueId();
 					players.add(uuid);
 					event.setCurrentItem(i);
-					new BukkitRunnable() {
-						@Override
-						public void run() {
-							try {
-								Inventories.clean(matrix);
-								((CraftingInventory) inv).setMatrix(matrix);
-								display((CraftingInventory) inv);
-								((Player) event.getWhoClicked()).updateInventory();
-							} finally {
-								players.remove(uuid);
-							}
+					Bukkit.getScheduler().runTaskLater(plugin, () -> {
+						try {
+							Inventories.clean(matrix);
+							((CraftingInventory) inv).setMatrix(matrix);
+							display((CraftingInventory) inv);
+							((Player) event.getWhoClicked()).updateInventory();
+						} finally {
+							players.remove(uuid);
 						}
-					}.runTaskLater(plugin, 0);
-
+					}, 0);
 				});
 			}
 		}

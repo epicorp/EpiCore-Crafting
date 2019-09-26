@@ -30,7 +30,6 @@ public class CShaped implements CraftingRecipe {
 
 	@Override
 	public ItemStack output(ItemStack[] matrix, boolean craftAll) {
-
 		if(matrix.length != inputs.length)
 			return null;
 		int lowest = Integer.MAX_VALUE;
