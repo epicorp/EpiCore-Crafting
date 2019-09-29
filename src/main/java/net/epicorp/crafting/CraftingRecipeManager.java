@@ -4,6 +4,7 @@ import net.epicorp.utilities.inventories.Inventories;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -38,7 +39,7 @@ public class CraftingRecipeManager implements Listener {
 
 	private Set<UUID> players = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void craftEvent(InventoryClickEvent event) { // here, we are setting the item in the user's hand
 		Inventory inv = event.getClickedInventory();
 		if (inv instanceof CraftingInventory) { // if the user clicked the output slot of the inventory
@@ -69,7 +70,7 @@ public class CraftingRecipeManager implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void prep(PrepareItemCraftEvent event) { // only thing that happens here, is that we are DISPLAYING the result item
 		if (!players.contains(event.getView().getPlayer().getUniqueId()))
 			display(event.getInventory());
@@ -81,7 +82,7 @@ public class CraftingRecipeManager implements Listener {
 		recipes.stream().map(c -> c.output(matrix, false)).filter(Objects::nonNull).findFirst().ifPresent(inventory::setResult);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void log(PlayerQuitEvent event) {
 		players.remove(event.getPlayer().getUniqueId()); // just in case lock set does not update properly, this will allow the player to relog to fix the issue
 	}
