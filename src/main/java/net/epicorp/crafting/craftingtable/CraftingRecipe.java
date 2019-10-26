@@ -1,4 +1,4 @@
-package net.epicorp.crafting;
+package net.epicorp.crafting.craftingtable;
 
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;

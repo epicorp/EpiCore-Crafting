@@ -1,4 +1,4 @@
-package net.epicorp.crafting;
+package net.epicorp.crafting.craftingtable;
 
 import net.epicorp.utilities.inventories.Inventories;
 import org.bukkit.inventory.ItemStack;
