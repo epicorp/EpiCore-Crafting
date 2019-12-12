@@ -11,18 +11,18 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class AbstractRecipeManager<R> implements Listener {
 	protected final Set<UUID> restricted = Collections.newSetFromMap(new ConcurrentHashMap<>());
 	protected final List<R> recipes = new Vector<>();
-	protected final Plugin plugin;
-
-	public AbstractRecipeManager(Plugin plugin) {
-		this.plugin = plugin;
-	}
+	protected Plugin plugin;
 
 	public void register(R recipe) {
-		recipes.add(recipe);
+		this.recipes.add(recipe);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void quit(PlayerQuitEvent event) {
-		restricted.remove(event.getPlayer().getUniqueId());
+		this.restricted.remove(event.getPlayer().getUniqueId());
+	}
+
+	public void setPlugin(Plugin plugin) {
+		this.plugin = plugin;
 	}
 }

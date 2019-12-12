@@ -17,10 +17,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class CraftingManager extends AbstractRecipeManager<CraftingRecipe> {
-	public CraftingManager(Plugin plugin) {
-		super(plugin);
-	}
-
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void craftEvent(InventoryClickEvent event) { // here, we are setting the item in the user's hand
 		Inventory inv = event.getClickedInventory();
@@ -31,20 +27,20 @@ public class CraftingManager extends AbstractRecipeManager<CraftingRecipe> {
 				final boolean craft = craftAll;
 				ItemStack[] matrix = Inventories.clone(((CraftingInventory) inv).getMatrix());
 				Inventories.clean(matrix);
-				recipes.stream().map(c -> c.output(matrix, craft)).filter(Objects::nonNull).findFirst().ifPresent(i -> {
+				this.recipes.stream().map(c -> c.output(matrix, craft)).filter(Objects::nonNull).findFirst().ifPresent(i -> {
 					if (craft && !Inventories.canAddStack(i, event.getView().getBottomInventory())) // if shiftclick and inventory is full
 						return;
 					UUID uuid = event.getView().getPlayer().getUniqueId();
-					restricted.add(uuid);
+					this.restricted.add(uuid);
 					event.setCurrentItem(i);
-					Bukkit.getScheduler().runTaskLater(plugin, () -> {
+					Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
 						try {
 							Inventories.clean(matrix);
 							((CraftingInventory) inv).setMatrix(matrix);
-							display((CraftingInventory) inv);
+							this.display((CraftingInventory) inv);
 							((Player) event.getWhoClicked()).updateInventory();
 						} finally {
-							restricted.remove(uuid);
+							this.restricted.remove(uuid);
 						}
 					}, 0);
 				});
@@ -54,13 +50,12 @@ public class CraftingManager extends AbstractRecipeManager<CraftingRecipe> {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void prep(PrepareItemCraftEvent event) { // only thing that happens here, is that we are DISPLAYING the result item
-		if (!restricted.contains(event.getView().getPlayer().getUniqueId()))
-			display(event.getInventory());
+		if (!this.restricted.contains(event.getView().getPlayer().getUniqueId())) this.display(event.getInventory());
 	}
 
 	private void display(CraftingInventory inventory) {
 		ItemStack[] matrix = Inventories.clone(inventory.getMatrix());
 		Inventories.clean(matrix);
-		recipes.stream().map(c -> c.output(matrix, false)).filter(Objects::nonNull).findFirst().ifPresent(inventory::setResult);
+		this.recipes.stream().map(c -> c.output(matrix, false)).filter(Objects::nonNull).findFirst().ifPresent(inventory::setResult);
 	}
 }

@@ -17,15 +17,12 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 public class AnvilManager extends AbstractRecipeManager<AnvilRecipe> {
-	public AnvilManager(Plugin plugin) {
-		super(plugin);
-	}
 
 	@EventHandler (priority = EventPriority.MONITOR)
 	public void offer(PrepareAnvilEvent event) {
 		AnvilInventory inventory = event.getInventory();
 		Player player = (Player) event.getView().getPlayer();
-		ItemStack result = result(player,  inventory.getContents(), inventory, event.getResult());
+		ItemStack result = this.result(player,  inventory.getContents(), inventory, event.getResult());
 		if(result != null) {
 			event.setResult(result);
 			this.restricted.add(player.getUniqueId());
@@ -37,9 +34,9 @@ public class AnvilManager extends AbstractRecipeManager<AnvilRecipe> {
 		Player player = (Player) event.getView().getPlayer();
 		Inventory inv = event.getClickedInventory();
 		int slot = event.getSlot();
-		if(inv instanceof AnvilInventory && restricted.contains(player.getUniqueId()) && slot == 2) {
+		if(inv instanceof AnvilInventory && this.restricted.contains(player.getUniqueId()) && slot == 2) {
 			ItemStack[] contents = inv.getContents();
-			ItemStack result = result(player, contents, (AnvilInventory) inv, null);
+			ItemStack result = this.result(player, contents, (AnvilInventory) inv, null);
 			inv.setContents(contents);
 			if(!Inventories.empty(result))
 				event.getView().setCursor(result);
@@ -47,7 +44,7 @@ public class AnvilManager extends AbstractRecipeManager<AnvilRecipe> {
 	}
 
 	private ItemStack result(Player player, ItemStack[] grid, AnvilInventory inventory, ItemStack result) {
-		Stream<AnvilRecipe> recipe = recipes.stream();
+		Stream<AnvilRecipe> recipe = this.recipes.stream();
 		if (!Inventories.empty(result)) recipe = recipe.filter(AnvilRecipe::override);
 
 		ItemStack[] astack = new ItemStack[1];
@@ -69,6 +66,6 @@ public class AnvilManager extends AbstractRecipeManager<AnvilRecipe> {
 
 	@EventHandler (priority = EventPriority.MONITOR)
 	public void close(InventoryCloseEvent event) {
-		restricted.remove(event.getPlayer().getUniqueId());
+		this.restricted.remove(event.getPlayer().getUniqueId());
 	}
 }

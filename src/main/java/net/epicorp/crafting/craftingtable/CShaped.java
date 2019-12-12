@@ -30,12 +30,12 @@ public class CShaped implements CraftingRecipe {
 
 	@Override
 	public ItemStack output(ItemStack[] matrix, boolean craftAll) {
-		if(matrix.length != inputs.length)
+		if(matrix.length != this.inputs.length)
 			return null;
 		int lowest = Integer.MAX_VALUE;
 		for (int x = 0; x < matrix.length; x++)
-			if (isSimilar.test(matrix[x], inputs[x])) {
-				int inps = Inventories.getAmount(inputs[x]);
+			if (this.isSimilar.test(matrix[x], this.inputs[x])) {
+				int inps = Inventories.getAmount(this.inputs[x]);
 				int div;
 				if (inps != 0) div = Inventories.getAmount(matrix[x]) / inps;
 				else div = Integer.MAX_VALUE;
@@ -47,7 +47,7 @@ public class CShaped implements CraftingRecipe {
 
 		for (int x = 0; x < matrix.length; x++)
 			if (matrix[x] != null)
-				matrix[x].setAmount((matrix[x].getAmount() - inputs[x].getAmount() * lowest));
+				matrix[x].setAmount((matrix[x].getAmount() - this.inputs[x].getAmount() * lowest));
 		ItemStack output = this.ouput.get();
 		output.setAmount(output.getAmount() * lowest);
 		return output;

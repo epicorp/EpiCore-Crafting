@@ -20,12 +20,12 @@ public class FunctionalRecipe implements CraftingRecipe {
 
 	@Override
 	public ItemStack output(ItemStack[] matrix, boolean craftAll) {
-		if(matrix.length != functions.length)
+		if(matrix.length != this.functions.length)
 			return null;
 		int lowest = Integer.MAX_VALUE;
 		int[] inputs = new int[matrix.length];
 		for (int x = 0; x < matrix.length; x++) {
-			int test = functions[x].apply(matrix[x]);
+			int test = this.functions[x].apply(matrix[x]);
 			inputs[x] = test;
 			if (test != -1) {
 				int div;

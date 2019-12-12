@@ -23,14 +23,14 @@ public class AnvilResult {
 	}
 
 	public ItemStack getOutput() {
-		return output;
+		return this.output;
 	}
 
 	public int getXp() {
-		return xp;
+		return this.xp;
 	}
 
 	public boolean isRename() {
-		return rename;
+		return this.rename;
 	}
 }
